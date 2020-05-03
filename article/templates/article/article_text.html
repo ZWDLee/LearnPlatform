@@ -1,0 +1,412 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load comment_tags %}
+{% load likes_tags %}
+{% block title %}
+  {{ article_text.title }}
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'article/article_text.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container text-bgc">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h2 style="text-align: center;margin-top: 80px">
+          课时{{ article_text.num }}：{{ article_text.title }}
+        </h2>
+        <div class="article_text">{{ article_text.text|safe }}</div>
+      </div>
+      <div class="article-more col-md-12">
+        <p class="pull-left">
+          {% if previous_article %}
+            <a href="{% url 'article_text' previous_article.pk %}" class="btn btn-default lesson-btn">
+              <<上一节
+            </a>
+          {% else %}
+            <button class="btn btn-default lesson-btn">没有了</button>
+          {% endif %}
+        </p>
+        <p class="pull-right">
+          {% if next_article %}
+            <a href="{% url 'article_text' next_article.pk %}" class="btn btn-default lesson-btn">
+              下一节>>
+            </a>
+          {% else %}
+            <button class="btn btn-default lesson-btn">没有了</button>
+          {% endif %}
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <div class="discuss">
+        <p id="comment_count">{% get_comment_count article_text %} 评论</p>
+        <div class="tabs-order">
+          <ul class="clearfix">
+            <li class="tabs-active li-order">按热度排序
+            </li>
+            <li class="li-order">按时间排序
+            </li>
+          </ul>
+        </div>
+        {% if user.is_authenticated %}
+          <div class="user-comment-info">
+            <img src="{{ user.get_user_icon }}" alt="{{ user.get_nickname_or_username }}">
+          </div>
+          {# 评论表单 #}
+          <form action="{% url 'update_comment' %}" method="POST" style="overflow:hidden;" id="comment_form">
+            {% csrf_token %}
+            {% get_comment_form article_text as comment_form %}
+            {% for field in comment_form %}
+              {{ field }}
+            {% endfor %}
+            {% if is_participate %}
+              <input type="submit" class="btn-submit btn btn-primary" value="发表评论">
+              <p id="comment_error" class="text-danger"></p>
+            {% else %}
+              <input type="submit" class="btn-submit btn btn-default" value="请先参加"
+                     disabled="disabled">
+              <p id="comment_error" class="text-danger"></p>
+            {% endif %}
+          </form>
+        {% else %}
+          <div class="account-tip">
+            您尚未登录，登录之后方可评论~
+            <a class="btn btn-primary" href="{% url 'login_to' %}?from={{ request.get_full_path }}">登录</a>
+            <span> or </span>
+            <a class="btn btn-danger" href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a>
+          </div>
+        {% endif %}
+        {# 评论列表 #}
+        {% get_comment_list article_text as comment_list %}
+        <div class="tabs">
+          {% for comment in comment_list.page_of_comment %}
+            <div class="comment-list-item" id="root_{{ comment.pk }}">
+              <div class="user-comment-info">
+                <a href="{% url 'user_center' comment.user.pk %}">
+                  <img src="{{ comment.user.get_user_icon }}" alt="{{ comment.user.get_nickname_or_username }}">
+                </a>
+              </div>
+              <div class="comment-info" id="comment_{{ comment.pk }}">
+                <div class="comment-user-info">
+                  <a href="{% url 'user_center' comment.user.pk %}">
+                    <span id="user_{{ comment.pk }}">{{ comment.user.get_nickname_or_username }}</span>
+                  </a>
+                </div>
+                <p>{{ comment.text|safe }}</p>
+                <div class="reply-bottom-info">
+                  <span>{{ comment.comment_time|date:'Y-m-d H:i:s' }}</span>
+                  <span class="likes"
+                        onclick="likeChange(this, '{% get_content_type comment %}',{{ comment.pk }})">
+                          {% get_likes_style comment as likes_style %}
+                    {% if likes_style %}
+                      <img src="{% static 'img/system_icon/like_light.svg' %}" class="like-style active"
+                           width="15" height="15">
+                    {% else %}
+                      <img src="{% static 'img/system_icon/like.svg' %}" class="like-style"
+                           width="15" height="15">
+                    {% endif %}
+                    <span class="liked-num">{% get_like_count comment %}</span>
+                        </span>
+                  <span><a href="javascript:reply({{ comment.pk }});">回复</a></span>
+                </div>
+                {# 回复部分 #}
+                {% for reply in comment.root_comment.all %}
+                  <div class="reply-list-item" id="root_{{ reply.pk }}">
+                    <div class="user-reply-info">
+                      <a href="{% url 'user_center' reply.user.pk %}">
+                        <img src="{{ reply.user.get_user_icon }}"
+                             alt="{{ reply.user.get_nickname_or_username }}">
+                        &nbsp;<span id="user_{{ reply.pk }}">{{ reply.user.get_nickname_or_username }}</span>
+                      </a>
+                      {% if reply.root == reply.parent %}
+                      {% else %}
+                        <span>回复</span>
+                        <a href="{% url 'user_center' reply.reply_to.pk %}">
+                          {{ reply.reply_to.get_nickname_or_username }}
+                        </a>
+                      {% endif %}
+                    </div>
+                    <p class="reply-text">{{ reply.text|safe }}</p>
+                    <div class="clearfix"></div>
+                    <div class="reply-bottom-info">
+                            <span class="reply-time">
+                              {{ reply.comment_time|date:'Y-m-d H:i:s' }}
+                            </span>
+                      <span class="likes"
+                            onclick="likeChange(this, '{% get_content_type reply %}',{{ reply.pk }})">
+                              {% get_likes_style reply as likes_style %}
+                        {% if likes_style %}
+                          <img src="{% static 'img/system_icon/like_light.svg' %}" class="like-style active"
+                               width="15" height="15">
+                        {% else %}
+                          <img src="{% static 'img/system_icon/like.svg' %}" class="like-style"
+                               width="15" height="15">
+                        {% endif %}
+                        <span class="liked-num">{% get_like_count reply %}</span>
+                            </span>
+                      <span><a href="javascript:reply({{ reply.pk }});">回复</a></span>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% empty %}
+            <div class="no_content">
+              <p>抢沙发~来发评论吧！</p>
+            </div>
+          {% endfor %}
+        </div>
+        {#  分页器    #}
+        <ul class="pagination pagination-lg">
+          <li onclick="pageControl()">
+            {% if comment_list.page_of_comment.has_previous %}
+              <a href="?page={{ comment_list.page_of_comment.previous_page_number }}"
+                 aria-label="Previous" id="page-control">
+                <span aria-hidden="true">上一页</span>
+              </a>
+            {% else %}
+              <span aria-hidden="true">上一页</span>
+            {% endif %}
+          </li>
+          {% for page_num in comment_list.page_list %}
+            {% if page_num == comment_list.page_of_comment.number %}
+              <li class="active"><span>{{ page_num }}</span></li>
+            {% else %}
+              <li onclick="pageControl()"><a href="?page={{ page_num }}" id="page-control">{{ page_num }}</a></li>
+
+            {% endif %}
+
+          {% endfor %}
+          <li onclick="pageControl()">
+            {% if comment_list.page_of_comment.has_next %}
+              <a href="?page={{ comment_list.page_of_comment.next_page_number }}"
+                 aria-label="Previous" id="page-control">
+                <span aria-hidden="true">下一页</span>
+              </a>
+            {% else %}
+              <span aria-hidden="true">下一页</span>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="to-comment">
+    <img src="{% static 'img/system_icon/comment.svg' %}" alt="">
+  </div>
+{% endblock %}
+{% block ext_js %}
+  <script>
+    $('#to-comment').click(function () {
+      $('html').animate({
+          scrollTop: $('#comment_count').offset().top - 60
+      }, 300);
+    });
+    // 评论页面改变调整页面位置
+    function pageControl() {
+      sessionStorage.setItem('page_num', '1');
+    }
+
+    $(window).load(function () {
+      if (sessionStorage.getItem('page_num') != null) {
+        $('html').animate({scrollTop: $('#comment_count').offset().top - 60}, 0);
+        sessionStorage.clear();
+      }
+    });
+    // 消息入口时，页面滑动到对应评论处
+    if (window.location.hash) {
+      $('html').animate({
+          scrollTop: $(window.location.hash).offset().top - 60
+      }, 500);
+    }
+
+    {#function forwardPage(article_text_pk, page_num) {#}
+    {#  $.ajax({#}
+    {#    url: '{% url 'page_control' %}',#}
+    {#    type: 'GET',#}
+    {#    data: {#}
+    {#      article_text_pk: article_text_pk,#}
+    {#      page_num: page_num#}
+    {#    },#}
+    {#    cache: false,#}
+    {#    success: function (data) {#}
+    {#      console.log(data);#}
+    {#    },#}
+    {#    error: function (xhr) {#}
+    {#      console.log(xhr);#}
+    {#    }#}
+    {#  })#}
+    {# }#}
+
+    // 排序样式切换 + ajax请求
+    $('.tabs-order ul li').click(function () {
+      if ($(this).attr('class', 'tabs-active')) {
+        const index = $(this).index();
+        $(this).addClass('tabs-active').siblings().removeClass('tabs-active');
+        if (index == 0) {
+          window.location.href='?page=1#comment_count';
+        }else {
+          window.location.href='?page=1&order=date#comment_count';
+        }
+      }
+    });
+
+    // 点赞
+    function likeChange(obj, content_type, object_id) {
+      var is_like = obj.getElementsByClassName('active').length == 0;
+      $.ajax({
+        url: "{% url 'like_change' %}",
+        type: 'GET',
+        data: {
+          content_type: content_type,
+          object_id: object_id,
+          is_like
+        },
+        cache: false,
+        success: function (data) {
+          if (data['status'] == 'SUCCESS') {
+            var like_class = $(obj.getElementsByClassName('like-style'));
+            if (is_like) {
+              like_class.addClass('active');
+              like_class.attr('src', '{% static 'img/system_icon/like_light.svg' %}');
+            } else {
+              like_class.removeClass('active');
+              like_class.attr('src', '{% static 'img/system_icon/like.svg' %}');
+            }
+            //更新点赞数
+            var liked_num = $(obj.getElementsByClassName('liked-num'));
+            liked_num.text(data['liked_num']);
+          } else {
+            if (data['code'] == 400) {
+              $('#opt_out').modal('hide');
+              $('#tips p').append(
+                "您尚未<a href='{% url 'login_to' %}?from={{ request.get_full_path }}'>登录</a>，点击前往登录页面");
+              $('#tips').attr('class', 'animated fadeIn').show();
+              setTimeout(function () {
+                $('#tips').attr('class', 'animated fadeOut');
+                setTimeout(function () {
+                  $('#tips p').empty();
+                }, 1000);
+              }, 2000);
+            } else {
+              $('#opt_out').modal('hide');
+              $('#tips p').text(data['message']);
+              $('#tips').attr('class', 'animated fadeIn').show();
+              setTimeout(function () {
+                $('#tips').attr('class', 'animated fadeOut');
+              }, 2000);
+            }
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        }
+      })
+    }
+
+    // 评论ajax
+    $('#comment_form').submit(function () {
+      // 判断是否为空
+      {#$("#comment_error").text('');#}
+      {#if (CKEDITOR.instances["id_text"].document.getBody().getText().trim() == '') {#}
+      {#  $("#comment_error").text('评论内容不能为空');#}
+      {#  return false;#}
+      {# }#}
+      // 异步提交
+      $.ajax({
+        url: '{% url 'update_comment' %}',
+        type: 'POST',
+        data: $(this).serialize(),
+        cache: false,
+        success: function (data) {
+          if ($('#reply_comment_id').val() == '0') {
+            const comment_html = '<div class="comment-list-item">\n' +
+              '<div class="user-comment-info">\n' +
+              '<a href="/user/profile/"' + data['user_pk'] + '>\n' +
+              '<img src="' + data['user_avatar'] + '" alt="' + data['username'] + '">\n' +
+              '</a>\n' +
+              '</div>\n' +
+              '<div class="comment-info" id="comment_' + data['pk'] + '">\n' +
+              '<div class="comment-user-info">\n' +
+              '<a href="/user/profile/"' + data['user_pk'] + '>\n' +
+              '<span id="user_' + data['pk'] + '">' + data['username'] + '</span>\n' +
+              '</a>\n' +
+              '</div>\n' +
+              '<p>' + data['text'] + '</p>\n' +
+              '<div class="reply-bottom-info">\n' +
+              '<span>' +
+              data['comment_time'].replace(/\.\d*Z$/ig, ' ').replace(/[a-zA-Z\s]/ig, ' ') +
+              '</span>\n' +
+              '<span class="likes" onclick="likeChange(this, \'' + data['content_type'] + '\',' + data['pk'] + ')">\n' +
+              '<img src="{% static 'img/system_icon/like.svg' %}" alt="" class="like-style">\n' +
+              '<span class="liked-num">0</span>' +
+              '</span>\n' +
+              '<span><a href="javascript:reply(' + data['pk'] + ');">回复</a></span>\n' +
+              '</div>\n' +
+              '</div>\n' +
+              '</div>';
+            $('.tabs').prepend(comment_html);
+            $('#tips p').text('评论成功');
+            $('#tips').attr('class', 'animated fadeIn').show();
+            setTimeout(function () {
+              $('#tips').attr('class', 'animated fadeOut');
+            }, 2000);
+          } else {
+            const reply_html = '<div class="reply-list-item">\n' +
+              '<div class="user-reply-info">\n' +
+              '<a href="/user/profile/"' + data['user_pk'] + '">\n' +
+              '<img src="' + data['user_avatar'] + '"\n' +
+              'alt="' + data['username'] + '">\n' +
+              '&nbsp;<span id="user_' + data['pk'] + '">' + data['username'] + '</span>\n' +
+              '</a>\n' +
+              '<span>回复</span>\n' +
+              '<a href="/user/profile/"' + data['reply_to_key'] + '">\n' +
+              '' + data['reply_to'] + '\n' +
+              '</a>\n' +
+              '</div>\n' +
+              '<p class="reply-text">' + data['text'] + '</p>\n' +
+              '<div class="clearfix"></div>\n' +
+              '<div class="reply-bottom-info">\n' +
+              '<span class="reply-time">' +
+              data['comment_time'].replace(/\.\d*Z$/ig, ' ').replace(/[a-zA-Z\s]/ig, ' ') +
+              '</span>\n' +
+              '<span class="likes" onclick="likeChange(this, \'' + data['content_type'] + '\',' + data['pk'] + ')">\n' +
+              '<img src="/static/img/system_icon/like.svg" alt="" class="like-style">\n' +
+              '<span class="liked-num">0</span>' +
+              '</span>\n' +
+              '<span><a href="javascript:reply(' + data['pk'] + ');">回复</a></span>\n' +
+              '</div>\n' +
+              '</div>';
+            $('#comment_' + data['root_pk']).append(reply_html);
+            $('#tips p').text('回复成功');
+            $('#tips').attr('class', 'animated fadeIn').show();
+            setTimeout(function () {
+              $('#tips').attr('class', 'animated fadeOut');
+            }, 2000);
+          }
+          // 清空编辑框的内容
+          $('#reply_content_container').hide();
+          $('#reply_comment_id').val('0');
+          $('.no_content').remove();
+          $('#id_text').val('');
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        }
+      });
+      return false;
+    });
+
+    // 回复
+    function reply(reply_comment_id) {
+      $('#reply_comment_id').val(reply_comment_id);
+      const user = $('#user_' + reply_comment_id).html();
+      $('#id_text').attr('placeholder', '@ ' + user);
+      $('html').animate({scrollTop: $('#comment_form').offset().top - 60}, 300, function () {
+        $('#id_text').focus();
+        $('#id_text').val('');
+      });
+    }
+  </script>
+{% endblock %}

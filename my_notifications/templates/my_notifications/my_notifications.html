@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+  收到的消息
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'css/notifications.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container" style="margin-top: -33px">
+    <div class="row">
+      <div class="col-md-2 aside">
+        <div id="option-card">
+          <h2>消息中心</h2>
+          <ul>
+            <li class="active">
+              <span>评论回复</span>
+              {% if comment_notification_num >= 1 %}
+                <sup class="badge unread-count">{{ comment_notification_num }}</sup>
+              {% else %}
+                <sup class="badge unread-count"></sup>
+              {% endif %}
+            </li>
+            <li>
+              <span>收到的赞</span>
+              {% if likes_notification_num >= 1 %}
+                <sup class="badge unread-count">{{ likes_notification_num }}</sup>
+              {% else %}
+                <sup></sup>
+              {% endif %}
+            </li>
+            {% if user.profile.user_type == 1 %}
+              <li>
+                <span>收到评价</span>
+                {% if score_notification_num >= 1 %}
+                  <sup class="badge unread-count">{{ score_notification_num }}</sup>
+                {% else %}
+                  <sup></sup>
+                {% endif %}
+              </li>
+            {% else %}
+              <li style="display: none">
+              </li>
+            {% endif %}
+            <li>
+              <span>系统消息</span>
+              {% if system_notification_num >= 1 %}
+                <sup class="badge unread-count">{{ system_notification_num }}</sup>
+              {% else %}
+                <sup></sup>
+              {% endif %}
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-md-10 right-content">
+        <div>
+          <div class="top-bar">
+            <div class="title">评论回复</div>
+            <div class="pull-right control">
+              <a href="{% url 'delete_notifications' %}" class="del-notify">
+                <span class="glyphicon glyphicon-trash"></span> 删除全部已读
+              </a>
+            </div>
+          </div>
+          {# 评论&回复 #}
+          <div class="notify-show active">
+            {% for notification in request.user.notifications.all %}
+              {% if notification.data.notification_type == 'comment' or notification.data.notification_type == 'reply' %}
+                <div class="sender">
+                  <div class="user-avatar">
+                    <a href="{{ notification.data.user_url }}">
+                      <img src="{{ notification.data.user_avatar }}" alt="">
+                    </a>
+                  </div>
+                  <div class="other-info">
+                    <a href="{{ notification.data.user_url }}">
+                      <span>{{ notification.data.send_user }}</span>
+                    </a>
+                    <span>{{ notification.verb }}
+                      {% if notification.data.notification_type == 'comment' %}
+                        《{{ notification.data.article_title }}》
+                      {% else %}
+                        <div class="reply-text">
+                            回复 <a href="{% url 'user_center' user.pk %}">{{ user.get_nickname_or_username }}</a>
+                            ：{{ notification.data.reply_text }}
+                          </div>
+                        <div class="about-comment">
+                            {{ user.get_nickname_or_username }}：{{ notification.data.about_comment }}
+                          </div>
+                      {% endif %}
+                      <div class="timestamp">{{ notification.timestamp }}</div>
+                      </span>
+                  </div>
+                  <div class="pull-right">
+                    <a href="{{ notification.data.jump_url }}" title="查看详情">查看详情&rarr;</a>
+                  </div>
+                  <div class="bottom-line"></div>
+                </div>
+              {% endif %}
+            {% empty %}
+              <div class="no-notify">暂无消息</div>
+            {% endfor %}
+          </div>
+          {# 点赞 #}
+          <div class="notify-show">
+            {% for notification in request.user.notifications.all %}
+              {% if notification.data.notification_type == 'likes' %}
+                <div class="sender">
+                  <div class="user-avatar">
+                    <a href="{{ notification.data.user_url }}">
+                      <img src="{{ notification.data.user_avatar }}" alt="">
+                    </a>
+                  </div>
+                  <div class="other-info">
+                    <a href="{{ notification.data.user_url }}">
+                      <span>{{ notification.data.send_user }}</span>
+                    </a>
+                    <span>
+                        {{ notification.verb }}
+                        <a href="{{ notification.data.jump_url }}" title="查看详情">
+                          <div class="about-comment">
+                            {% if notification.data.obj_text|length > 70 %}
+                              {{ notification.data.obj_text|truncatechars:70 }}...
+                            {% else %}
+                              {{ notification.data.obj_text }}
+                            {% endif %}
+                          </div>
+                        </a>
+                        <div class="timestamp">{{ notification.timestamp }}</div>
+                      </span>
+                  </div>
+                  <div class="pull-right">
+                    <a href="{{ notification.data.jump_url }}" title="查看详情">查看详情&rarr;</a>
+                  </div>
+                  <div class="bottom-line"></div>
+                </div>
+              {% endif %}
+            {% empty %}
+              <div class="no-notify">暂无消息</div>
+            {% endfor %}
+          </div>
+          {# 课程评价 #}
+          <div class="notify-show">
+            {% for notification in request.user.notifications.all %}
+              {% if notification.data.notification_type == 'score' %}
+                <div class="sender">
+                  <div class="user-avatar">
+                    <a href="{{ notification.data.user_url }}">
+                      <img src="{{ notification.data.user_avatar }}" alt="">
+                    </a>
+                  </div>
+                  <div class="other-info">
+                    <a href="{{ notification.data.user_url }}">
+                      <span>{{ notification.data.send_user }}</span>
+                    </a>
+                    <span>
+                        <a href="{{ notification.data.jump_url }}" title="查看详情">
+                          {{ notification.verb }}
+                        </a>
+                        <div class="timestamp">{{ notification.timestamp }}</div>
+                      </span>
+                  </div>
+                  <div class="pull-right">
+                    <a href="{{ notification.data.jump_url }}" title="查看详情">查看详情&rarr;</a>
+                  </div>
+                  <div class="bottom-line"></div>
+                </div>
+              {% endif %}
+            {% empty %}
+              <div class="no-notify">暂无消息</div>
+            {% endfor %}
+          </div>
+          {# 系统消息 #}
+          <div class="notify-show">
+            {% for notification in request.user.notifications.all %}
+              {% if notification.data.notification_type == 'system' %}
+                <div class="sender">
+                  <div class="other-info">
+                    <h4>系统通知</h4>
+                    <span>
+                      <a href="{% url 'system_notification' notification.data.notification_id  %} "
+                         title="查看详情">
+                        {{ notification.verb|truncatechars_html:70 }}
+                      </a>
+                      <div class="timestamp">{{ notification.timestamp }}</div>
+                    </span>
+                  </div>
+                  <div class="pull-right">
+                    <a href="{{ notification.data.notification_id }}" title="查看详情">查看详情&rarr;</a>
+                  </div>
+                  <div class="bottom-line"></div>
+                </div>
+              {% endif %}
+            {% empty %}
+              <div class="no-notify">暂无消息</div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+  <script>
+    // 高度适配浏览器
+    $(window).load(
+      function () {
+        if ($(window).height() == 983) {
+          $('.aside').addClass('new_height');
+          $('.right-content').addClass('new_height');
+        }
+      }
+    );
+    $(function () {
+      //选项卡切换
+      $('#option-card ul li').click(function () {
+        const tab_num = $(this).index();
+        const notification_type = $(this).text().trim().slice(0, 4);
+        $('.title').text(notification_type);
+        $(this).addClass('active').siblings().removeClass('active');
+        $('.notify-show').eq(tab_num).addClass('active').siblings().removeClass('active');
+        // 已读ajax
+        if ($('ul .active .unread-count').text().length > 0) {
+          $.ajax({
+            url: '{% url 'notification_read' %}',
+            type: 'GET',
+            data: {
+              notification_type
+            },
+            cache: false,
+            success: function (data) {
+              if (data['state'] == 'SUCCESS') {
+                $('ul .active .unread-count').text('');
+                if (data['notification_count'] != 0) {
+                  $('a .unread-count').text(data['notification_count']);
+                } else {
+                  $('a .unread-count').text('');
+                }
+              } else {
+                $('#tips p').text(data['message']);
+                $('#tips').attr('class', 'animated fadeIn').show();
+                setTimeout(function () {
+                  $('#tips').attr('class', 'animated fadeOut');
+                }, 2000);
+              }
+            },
+          });
+        }
+      });
+    });
+    {# 不同入口 #}
+    if (window.location.hash) {
+      if (window.location.hash == '#likes') {
+        $('#option-card ul li').eq(1).addClass('active').siblings().removeClass('active');
+        $('.notify-show').eq(1).addClass('active').siblings().removeClass('active');
+      }
+      if (window.location.hash == '#score') {
+        $('#option-card ul li').eq(2).addClass('active').siblings().removeClass('active');
+        $('.notify-show').eq(2).addClass('active').siblings().removeClass('active');
+      }
+      if (window.location.hash == '#system') {
+        $('#option-card ul li').eq(3).addClass('active').siblings().removeClass('active');
+        $('.notify-show').eq(3).addClass('active').siblings().removeClass('active');
+      }
+    }
+  </script>
+{% endblock %}

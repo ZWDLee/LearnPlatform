@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  文章内容
+{% endblock %}
+{% block ext_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'article/article-list.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12 col-sm-8 col-md-9 col-lg-10">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            文章列表
+          </div>
+          <div class="panel-body">
+            {% for article in articles %}
+              <div class="icon-bar">
+                <a href="{% url 'article_detail' article.pk %}">
+                  <img src="{{ article.icon.url }}" alt="">
+                </a>
+              </div>
+              <div class="article">
+                <h3><a href="{% url 'article_detail' article.pk %}">{{ article.title }}</a></h3>
+                <p class="article-info">
+                  <span class="glyphicon glyphicon-tag"></span>
+                  <a href="#">
+                    {{ article.article_type.type_name }}
+                  </a>
+                  <span class="glyphicon glyphicon-time"></span>
+                  {{ article.created_time|date:"Y-m-d H-i-s" }}&nbsp;&nbsp;
+                </p>
+                <p>
+                  {{ article.content |striptags | truncatechars:200 }}
+                </p>
+              </div>
+            {% empty %}
+              <div class="blg">
+                <h3>-- 暂无文章，敬请期待 ---</h3>
+              </div>
+            {% endfor %}
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+
+{% endblock %}

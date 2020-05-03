@@ -1,0 +1,80 @@
+body {
+  background-color: #f4f5f7;
+}
+/*轮播图*/
+.swiper-container {
+  height: 315px;
+  z-index: 1;
+}
+
+.swiper-container .swiper-button-prev{
+  color: #fff;
+}
+.swiper-container .swiper-button-next{
+  color: #fff;
+}
+.swiper-container .swiper-button-prev,
+.swiper-container .swiper-button-next {
+  display: none;
+}
+
+.swiper-container:hover .swiper-button-prev,
+.swiper-container:hover .swiper-button-next {
+  display: block;
+}
+.swiper-slide{
+  text-align: center;
+}
+/*.container {*/
+/*  margin-top: 5em;*/
+/*}*/
+.title-bar {
+  margin-top: 3em;
+}
+.article {
+  height: 300px;
+}
+.article a{
+  font-size: 1.2em;
+  color: #929292;
+  text-decoration: none;
+}
+.article a:hover {
+  color: #23b8ff;
+}
+.panel {
+  border: none!important;
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 3em;
+  transition: all 0.2s ease;
+}
+.panel:hover {
+  box-shadow: 0 0 6px #a0a0a0;
+}
+.panel-body {
+  margin: 0;
+  padding: 0;
+}
+.panel-img {
+  overflow: hidden;
+  height: 162px;
+}
+.panel-body .article-img {
+    width: 100%;
+    transition: all 0.2s linear;
+}
+.panel-body:hover .article-img{
+    transform: scale(1.1);
+}
+.article-info {
+  padding: 1em 1em;
+}
+
+.article-info .article-info-title {
+  color: #0f0f0f;
+  font-size: 1.2em;
+}
+.info-bottom {
+  margin-top: 1em;
+}

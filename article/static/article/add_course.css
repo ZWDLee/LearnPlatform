@@ -1,0 +1,22 @@
+body {
+    overflow-y: scroll!important;
+}
+.row {
+    margin-bottom: 150px;
+    position: relative;
+}
+.save-btn {
+    margin: 1em 0;
+    width: 220px;
+    height: 52px;
+    background-image: linear-gradient(135deg, #56CCF2 0%, #2F80ED 100%);
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+}
+.save-btn:hover {
+    background-image: linear-gradient(120deg, #00c6ff 0%, #12a0ff 100%);
+}

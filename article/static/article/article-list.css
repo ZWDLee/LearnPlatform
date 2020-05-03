@@ -1,0 +1,12 @@
+.article:not(:last-child){
+    margin-bottom: 2em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid #eee;
+}
+.article .icon-bar {
+    float: left;
+    display: inline-block;
+}
+.article h3{
+    margin-top: 0.5em;
+}

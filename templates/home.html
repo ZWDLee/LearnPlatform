@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load participate_tags %}
+{% block title %}
+  在线学习平台
+{% endblock %}
+{% block is_active %}active{% endblock %}
+{% block ext_css %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static 'css/swiper.css' %}">
+  <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="swiper-container" id="topSwiper">
+    <div class="swiper-wrapper">
+      {% for wheel in wheels %}
+        <div class="swiper-slide">
+          <a href="{% url 'article_detail' wheel.trackid.pk %}">
+            <img src="{{ wheel.img.url }}" alt="{{ wheel.name }}">
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <!-- 如果需要分页器 -->
+    <div class="swiper-pagination"></div>
+    <!-- 如果需要导航按钮 -->
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-button-next"></div>
+  </div>
+  <!-- 课程内容 -->
+  <div class="container">
+    <div class="title-bar">
+      <img src="{% static 'img/system_icon/文档.svg' %}" alt="" width="40" style="display: inline-block;vertical-align: bottom;">
+      <span style="font-size: 2.1em;display: inline-block">热门推荐</span>
+    </div>
+    <div class="row">
+      {% for article in articles %}
+        <div class="col-md-3 col-sm-6 col-xs-12 article">
+          <a href="{% url 'article_detail' article.pk %}" target="_blank">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="panel-img">
+                  <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img">
+                </div>
+                <div class="article-info">
+                  {{ article.title }}
+                  <div class="info-bottom">
+                    <p class="pull-left">
+                      <span class="label label-info">{{ article.article_type.type_name }}</span>
+                      <span class="label label-success">{{ article.get_grade_display }}</span>
+                    </p>
+                    <p class="pull-right" style="color: #cdcdcd">
+                      <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="15" height="15"
+                           style="vertical-align: -5%"> {% get_participate_num article %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <div>
+      <img src="{% static 'img/system_icon/设置.svg' %}" alt="" width="40" style="display: inline-block;vertical-align: bottom;">
+      <span style="font-size: 2.1em;display: inline-block">新手入门</span>
+    </div>
+    <div class="row">
+      {% for article in article_list_by_cj %}
+        <div class="col-md-3 col-sm-6 col-xs-12 article">
+          <a href="{% url 'article_detail' article.pk %}"  target="_blank">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="panel-img">
+                  <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img">
+                </div>
+                <div class="article-info">
+                  {{ article.title }}
+                  <div class="info-bottom">
+                    <p class="pull-left">
+                      <span class="label label-info">{{ article.article_type.type_name }}</span>
+                      <span class="label label-success">{{ article.get_grade_display }}</span>
+                    </p>
+                    <p class="pull-right">
+                      <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="20" height="20">
+                        {% get_participate_num article %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+    <div>
+      <img src="{% static 'img/system_icon/数据.svg' %}" alt="" width="40" style="display: inline-block;vertical-align: bottom;">
+      <span style="font-size: 2.1em;display: inline-block">高级进阶</span>
+    </div>
+    <div class="row">
+      {% for article in article_list_by_gj %}
+        <div class="col-md-3 col-sm-6 col-xs-12 article">
+          <a href="{% url 'article_detail' article.pk %}"  target="_blank">
+            <div class="panel panel-default">
+              <div class="panel-body">
+                <div class="panel-img">
+                  <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img">
+                </div>
+                <div class="article-info">
+                  {{ article.title }}
+                  <div class="info-bottom">
+                    <p class="pull-left">
+                      <span class="label label-info">{{ article.article_type.type_name }}</span>
+                      <span class="label label-success">{{ article.get_grade_display }}</span>
+                    </p>
+                    <p class="pull-right">
+                      <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="20" height="20">
+                        {% get_participate_num article %}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% include 'footer.html' %}
+{% endblock %}
+{% block ext_js %}
+  {{ block.super }}
+  <script src="{% static 'js/grade.js' %}"></script>
+  <script src="{% static 'js/swiper.jquery.js' %}"></script>
+  {#  <script src="{% static 'app/js/index.js' %}"></script>#}
+  <script>
+    // 轮播图背景色
+    window.addEventListener('load', function () {
+      Grade(document.querySelectorAll('.swiper-slide'));
+      setInterval(function () {
+        Grade(document.querySelectorAll('.swiper-slide'));
+      }, 3000);
+    });
+    // 轮播图
+    var swiper = new Swiper('.swiper-container', {
+      pagination: '.swiper-pagination',
+      paginationClickable: true,
+      loop: true,
+      autoplay: 3000,
+      speed: 1000,
+      prevButton: '.swiper-button-prev',
+      nextButton: '.swiper-button-next',
+      effect: 'fade',//  effect: 'flip',effect: 'coverflow',slide', 'fade',cube
+      grabCursor: true,
+      cube: {
+        shadow: false,
+        slideShadows: false,
+        shadowOffset: 20,
+        shadowScale: 0.94
+      }
+    });
+  </script>
+{% endblock %}

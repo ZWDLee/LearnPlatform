@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+      <h2>{{ message }}，<a href="{% url 'login_to' %}">前往登录>></a></h2>
+    </div>
+  </div>
+{% endblock %}

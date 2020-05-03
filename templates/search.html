@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load participate_tags %}
+{% block title %}
+  搜索结果
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'css/search.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-9">
+        <p>共{{ result_count }}条<span class="words"> {{ words }} </span>相关搜索</p>
+        <div class=" panel-default panel">
+        {% for field in page_for_result %}
+          <a href="{% url 'article_detail' field.pk %}">
+            <div class="result-item panel-body">
+              <div class="course-img">
+                <img src="{{ field.icon.url }}" alt="">
+              </div>
+              <div class="result-item-info">
+                <p>{{ field.title }}</p>
+                <p class="author">{{ field.author }}</p>
+                <p class="context">{{ field.content|striptags|truncatechars_html:120 }}</p>
+                <p class="participate_num"><img src="{% static 'img/system_icon/用户.svg' %}" alt="">
+                   &nbsp;{% get_participate_num field %}人参与
+                </p>
+              </div>
+            </div>
+          </a>
+        {% empty %}
+          <div class="no_search">
+            <img src="{% static 'img/system_icon/空.svg' %}" alt="">
+          </div>
+        {% endfor %}
+        </div>
+        {# 分页 #}
+        <ul class="pagination pagination-lg">
+          <li>
+            {% if page_for_result.has_previous %}
+              <a href="?page={{ page_for_result.previous_page_number }}"
+                 aria-label="Previous" id="page-control">
+                <span aria-hidden="true">上一页</span>
+              </a>
+            {% else %}
+              <span aria-hidden="true">上一页</span>
+            {% endif %}
+          </li>
+            {% for page_num in paginator.page_range %}
+              {% if page_num == page_for_result.number %}
+                <li class="active"><span>{{ page_num }}</span></li>
+              {% else %}
+                <li>
+                  <a href="?page={{ page_num }}" id="page-control">{{ page_num }}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+          <li>
+            {% if page_for_result.has_next %}
+              <a href="?page={{ page_for_result.next_page_number }}"
+                 aria-label="Previous" id="page-control">
+                <span aria-hidden="true">下一页</span>
+              </a>
+            {% else %}
+              <span aria-hidden="true">下一页</span>
+            {% endif %}
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h3>热门推荐</h3>
+        <div class="recommend-list">
+          <ul>
+            {% for recommend in recommends %}
+              <li class="recommend-item">
+                <a href="{% url 'article_detail' recommend.pk %}">
+                  <div class="recommend-img">
+                    <img src="{{ recommend.icon.url }}" alt="" width="150" height="80">
+                  </div>
+                  <div>
+                    {{ recommend.title }}
+                  </div>
+                </a>
+                <div class="clearfix"></div>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% include 'footer.html' %}
+{% endblock %}
+{% block ext_js %}
+
+{% endblock %}

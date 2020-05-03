@@ -1,0 +1,354 @@
+body {
+    background-color: #f4f5f7;
+}
+/*顶部课程内容*/
+.article-head {
+    background-color: #fff;
+    padding-bottom: 3em;
+    border-radius: 2px;
+    margin-top: -1em;
+    /*box-shadow: 0 0 3px #b7b7b7;*/
+}
+.head-info {
+    margin-top: 3em;
+}
+.article-img {
+    float: left;
+    margin-right: 0.5em;
+}
+.article-img img {
+    width: 100%;
+}
+.article-info {
+    display: inline-block;
+}
+.article-score-start {
+    margin:1em 0.5em;
+}
+.article-score-info {
+    vertical-align: sub;
+    color: #a2a2a2;
+    font-style: italic;
+}
+.article-info h3{
+    margin: 0;
+    padding-bottom: 0.9em;
+    font-size: 2em;
+    color: #333333;
+}
+.article-info {
+    color: #666666;
+}
+.article-info #btn-article {
+    margin-top: 5.9em;
+}
+.article-info span {
+    padding-left: 0.5em;
+    margin-right: 2em;
+}
+.btn-join {
+    width: 220px;
+    height: 52px;
+    background-image: linear-gradient(135deg, #12a0ff 0%, #12a0ff 100%);
+    border: none;
+    color: #fff;
+    font-size: 1.5em;
+}
+.btn-join:hover {
+    background-image: linear-gradient(120deg, #8f03f4 0%, #12a0ff 100%);
+}
+.participate {
+    margin: 1em 0;
+    color: #ababab;
+}
+.btn-drop-out {
+    margin-left: 1em;
+    border: none;
+    background-color: #fff;
+    vertical-align: bottom;
+    color: #acacac;
+    text-decoration: underline;
+}
+.btn-drop-out:hover {
+    color: #12a7ff;
+    text-decoration: underline;
+}
+/*.article-info p {*/
+/*    margin-top: 0.5em;*/
+/*}*/
+.distance-top {
+    margin-top: 1em;
+    padding-right: 0;
+}
+/*左侧课程内容*/
+.article-detail {
+    border-radius: 2px;
+    padding-bottom: 1em;
+    background-color: #fff;
+    box-shadow: 0 0 3px #b7b7b7;
+    padding-left: 0;
+}
+.article-detail-list p {
+    font-weight: bold;
+    font-size: 2em;
+    margin-left: 0.5em;
+}
+.article-content {
+    float: left;
+    clear: both;
+}
+.content-body {
+    margin: 4em 2em;
+}
+/*.article-list:first-child {*/
+/*    margin-top: 3em!important;*/
+/*}*/
+/*课程菜单*/
+.article-list {
+    display: inline;
+    width: 95%!important;
+    margin-left: 1.5em!important;
+}
+.article-list h2 {
+    font-weight: bold;
+}
+.article-list:last-child {
+    margin-bottom: 1em!important;
+}
+.article-list a{
+    margin-top: 0.5em!important;
+    transition: all 0.4s ease;
+}
+.article-list a:hover {
+    border:1px solid #23b8ff!important;
+}
+.article-title {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+.no_content {
+    text-align: center;
+    height: 580px;
+    margin: 9em;
+    color: #cdcdcd;
+}
+.lock {
+    vertical-align: -50%;
+    width: 20px;
+    height: 20px;
+}
+/*右侧作者信息*/
+.aside-author {
+    width: 100%;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 0 3px #b7b7b7;
+    border-radius: 2px;
+}
+.aside-author .author-icon {
+    margin-bottom: 1em;
+}
+.aside-author .author-icon img {
+    margin-top: 1em;
+    border-radius: 50%;
+    width: 5.5em;
+    height: 5.5em;
+}
+.aside-author a {
+    text-decoration: none;
+    color: #555555;
+}
+.aside-author a:hover {
+    color: #12a7ff;
+}
+.placeholder {
+    margin: 12px;
+    border-top: 1px solid #E3E3E3;
+}
+.aside-author .have_introduction {
+    text-indent: 2em;
+    text-align: left;
+    color: #555555;
+    margin: 0 1.3em;
+    padding-bottom: 1em;
+}
+.aside-author .no_introduction {
+    padding-bottom: 1.5em;
+}
+.access {
+    margin: 3em;
+}
+
+.starts span:first-child {
+    font-size: 22px;
+    margin-top: -4px;
+}
+.starts ul{
+    float:left;
+}
+.starts ul li{
+    list-style: none;
+    width:50px;
+    height:50px;
+    float:left;
+    background: url(/static/img/starky.png) no-repeat;
+    position: relative;
+}
+.account-tip {
+    margin-bottom: 2em;
+    margin-left: 1em;
+}
+.starts ul li:before {
+    content: attr(per);
+    width: 50px;
+    height: 23px;
+    position: absolute;
+    text-align: center;
+    left: -14px;
+    top: -30px;
+    /*display: none;*/
+    color: #fff;
+    border-radius: 3px;
+    background-color: #000;
+    z-index: 1;
+    transform: scaleY(0);
+    transition: all .3s ease-in-out .1s;
+    transform-origin: 0 100%;
+}
+.starts ul li:after {
+    content: ' ';
+    position: absolute;
+    left: 5px;
+    width: 10px;
+    height: 10px;
+    top: -14px;
+    background-color: #000;
+    opacity: 0;
+    transform: rotate(45deg) !important;
+    z-index: 0;
+    transition: all .3s ease-in-out .1s;
+}
+.starts ul li:hover:before, .starts ul li:hover:after {
+    opacity: 1;
+    transform: scaleY(1);
+}
+.starts ul li.on{
+    background: url(/static/img/starsy.png) no-repeat;
+}
+.starts ul span{
+    display:inline;
+    float:left;
+    padding-left:10px;
+    height:21px;
+    line-height:21px;
+}
+#score_form {
+    padding-left: 8px;
+    margin-bottom: 1em;
+}
+#id_text {
+    float: left;
+    resize:none;
+    width: 87% !important;
+    height: 74px;
+    margin-right: 1em;
+}
+.score-submit {
+    margin-bottom: 1em;
+    width: 91px;
+    height: 74px;
+}
+#score-link {
+    padding: 1em;
+    line-height: 3em;
+}
+.new-height {
+    height: 900px;
+}
+.score-list {
+    margin: 2em 0;
+}
+.scored-item {
+    padding: 0.5em 1em;
+    margin-bottom: 2em;
+}
+.score-user {
+    line-height: 1.3em;
+    font-size: 18px;
+    font-weight: bold;
+}
+.scored-item span {
+    margin-left: 10px;
+}
+.score-text {
+    color: #787878;
+    font-size: 18px;
+    padding: 1em 0;
+}
+.score-time {
+    color: #666;
+}
+
+/*模态框*/
+#opt_out {
+    top: 30%;
+}
+#opt_out .modal-header p {
+    color: #555555;
+    font-size: 1.2em;
+    margin-top: 2em;
+}
+.error_message {
+    margin-top: 21px;
+    margin-left: 14px;
+    color: #fc0509;
+}
+/*分页器*/
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10em;
+}
+.pagination li {
+    margin-right: 1em;
+}
+.pagination li a {
+    border-radius: 4px;
+    color: #535353;
+    transition: all .2s linear;
+}
+.pagination li a:hover {
+    background-color: #337ab7;
+    color: #fff;
+    border: 1px solid #337ab7;
+}
+.pagination li:hover span {
+    color: #fff;
+}
+.pagination li span {
+    border-radius: 4px;
+    color: #535353;
+}
+.pagination li:hover span {
+    background-color: #337ab7;
+}
+.recommend-list {
+    background-color: #fff;
+}
+.recommend-list .recommend-item {
+    padding: 0.8em 0.5em;
+    border-bottom: 1px solid #dddddd;
+}
+.recommend-list .recommend-item a {
+    text-decoration: none;
+    color: #555;
+}
+.recommend-list .recommend-item .recommend-img {
+    float: left;
+    margin-right: 0.5em;
+}
+.visit {
+    line-height: 2.2em;
+}
+

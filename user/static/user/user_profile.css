@@ -1,0 +1,70 @@
+body {
+    background-color: #f4f5f7;
+}
+.user-profile-box {
+
+}
+.user-profile-box .row .col-md-8{
+    box-shadow: 0 0 5px #cdcdcd;
+    background-color: #fff;
+}
+.price .category {
+    width: 100% !important;
+    margin-left: 0!important;
+}
+.cont {
+    padding: 0 3em;
+}
+.left-title {
+    margin-top: 0.5em;
+}
+input[id^='id_'] {
+}
+#id_nickname {
+    width: 140px;
+}
+.box {
+    margin: 0.75em 0;
+}
+.box span:last-child {
+    color: #acacac;
+}
+#username {
+    font-weight: bold;
+    margin-right: 2em;
+}
+#id_gender {
+    width: 70px;
+}
+#id_birth {
+    width: 140px;
+    line-height: 1.5em;
+}
+#id_education li label{
+    font-weight: normal!important;
+}
+.save-btn {
+    margin-top: 0.5em;
+    margin-bottom: 2em;
+    width: 220px;
+    height: 52px;
+    background-color: #34baff;
+    border: none;
+    color: #fff;
+    font-size: 18px;
+}
+.save-btn:hover {
+    background-color: #12a7ff;
+}
+.safety-item {
+    margin: 2em 0;
+}
+.title {
+    font-weight: bold;
+}
+.error_message {
+    color: #a94442;
+}
+#safety {
+    height: 791px;
+}

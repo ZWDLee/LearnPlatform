@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load participate_tags %}
+{% load article_tags %}
+{% block title %}
+  编辑|{{ course.title }}
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'article/editor_course.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <div class="course-info">
+          <div class="course-title">
+            {{ course.title }}
+            <a href="{% url 'editor_course' course.pk %}?from={{ request.get_full_path }}" class="pull-right">
+              <span class="glyphicon glyphicon-edit "></span> 修改
+            </a>
+          </div>
+          <div class="course-base">
+            <div class="course-type">
+              <div class="up-text">{{ course.article_type }}</div>
+              <div class="under-text">类型</div>
+            </div>
+            <div class="course-editor">
+              <div class="up-text">{% get_course_lesson course %}</div>
+              <div class="under-text">课时数</div>
+            </div>
+            <div class="course-editor">
+              <div class="up-text">{% get_participate_num course %}</div>
+              <div class="under-text">学习人数</div>
+            </div>
+            <div class="course-created-time">
+              <div class="up-text">{{ course.created_time }}</div>
+              <div class="under-text">创建时间</div>
+            </div>
+            <div class="update-course">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1 lesson">
+        <div class="lesson-bar">
+          <h2 style="display: inline-block">课时编辑</h2>
+          <button class="pull-right btn btn-primary"
+            onclick="javascript:window.location.href='{% url 'editor_lesson' %}?course_pk={{ course.pk }}&from={{ request.get_full_path }}';">
+            <span class="glyphicon glyphicon-plus"></span> 新的课时
+          </button>
+        </div>
+        {% for lesson in lessons %}
+          <div class="list-group-item" target="view_window">
+            <div class="lesson-left">
+              <span class="lesson-num">第{{ lesson.num }}课时</span>
+              <span class="lesson-title">{{ lesson|truncatechars:40 }}</span>
+            </div>
+            <div class="lesson-operating">
+              <button class="btn" onclick="javascript:window.location.href='{% url 'article_text' lesson.pk %}';">
+                <span class="glyphicon glyphicon-zoom-in"></span>查看
+              </button>
+              <button class="btn"
+                      onclick="javascript:window.location.href='{% url 'editor_lesson' lesson.pk %}?course_pk={{ course.pk }}&from={{ request.get_full_path }}';">
+                <span class="glyphicon glyphicon-edit"></span>编辑
+              </button>
+            </div>
+          </div>
+        {% empty %}
+          <h2 class="no_content">点击“新的课时”添加您的教学内容~</h2>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+  <script>
+  </script>
+{% endblock %}

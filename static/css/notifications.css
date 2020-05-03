@@ -1,0 +1,149 @@
+body {
+    background-color: #f4f5f7;
+}
+/*左侧*/
+.aside {
+    background-color: #fff;
+    height: 918px;
+    box-shadow: 0 0 8px #cdcdcd;
+}
+#option-card h2 {
+    text-align: center;
+    margin-top: 1em;
+    margin-bottom: 3em;
+}
+#option-card ul li {
+    cursor: pointer;
+    list-style: inside;
+    margin: 2em 3em;
+    font-weight: bold;
+    height: 20px;
+}
+#option-card ul li:hover {
+    color: #12a7ff;
+}
+#option-card ul li.active {
+    color: #12a7ff;
+}
+.del-notify {
+    text-decoration: none!important;
+    color: #535353;
+}
+.del-notify:hover {
+    color: #12a7ff;
+}
+/*右侧*/
+.right-content {
+    height: 918px;
+    overflow: scroll;
+    overflow-x: hidden;
+    position: relative;
+    background-color: #f9f9f9;
+}
+.right-content .top-bar {
+    margin: 1em 0;
+    position: sticky;
+    top: 1px;
+    background-color: #fff;
+    height: 50px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px #cdcdcd;
+}
+.right-content .top-bar .title {
+    display: inline-block;
+    line-height: 50px;
+    margin-left: 1em;
+}
+.right-content .top-bar .control {
+    line-height: 45px;
+    margin-right: 1em;
+}
+.notify-show {
+    display: none;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 3px #cdcdcd;
+}
+.notify-show.active {
+    display: block;
+}
+.notify-show .sender:last-child {
+    padding-bottom: 2em;
+}
+/*comment&reply*/
+.sender {
+    padding-top: 1.5em;
+    padding-left: 2em;
+    padding-right: 2em;
+}
+.sender .bottom-line {
+    margin-top: 1.5em;
+    border-bottom: 1px solid #cdcdcd;
+}
+.sender .user-avatar {
+    display: inline-block;
+    margin-right: 1em;
+    vertical-align: top;
+}
+.sender .user-avatar img{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+.sender .other-info {
+    display: inline-block;
+}
+.sender .other-info div {
+    margin-top: 0.5em;
+}
+.sender .other-info .about-comment {
+    color: #a1a1a1;
+    font-size: 12px;
+}
+.sender .other-info .about-comment:before {
+    content: '';
+    border-left: 2px solid #cdcdcd;
+    margin-right: 0.5em;
+}
+.sender .other-info .timestamp {
+    color: #a1a1a1;
+    font-size: 12px;
+}
+.no-notify {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em 0;
+}
+.new_height {
+    height: 924px;
+}
+/*firefox不支持滚动条样式修改，需要自定义滚动条*/
+.right-content::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width : 15px;  /*高宽分别对应横竖滚动条的尺寸*/
+  height: 1px;
+  }
+.right-content::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius   : 10px;
+  background-color: skyblue;
+  background-image: -webkit-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.2) 25%,
+      transparent 25%,
+      transparent 50%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0.2) 75%,
+      transparent 75%,
+      transparent
+  );
+  }
+.right-content::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  box-shadow   : inset 0 0 3px rgba(0, 0, 0, 0.2);
+  background   : #f3f3f3;
+  border-radius: 10px;
+  }
+
+

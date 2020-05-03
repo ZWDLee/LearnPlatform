@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  {{ title }}
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'article/editor_lesson.css' %}">
+  <script type="text/javascript" src="{% static "ckeditor/ckeditor-init.js" %}"></script>
+  <script type="text/javascript" src="{% static "ckeditor/ckeditor/ckeditor.js" %}"></script>
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <form action="" method="POST">
+          {% for field in form %}
+            {% csrf_token %}
+            <div><label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+            {{ field }}
+            <p class="text-danger">{{ field.errors.as_text }}</p>
+          {% endfor %}
+          <div class="tip">{{ register_form.non_field_errors }}</div>
+          <input type="submit" value="保存" class="save-btn">
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+
+{% endblock %}

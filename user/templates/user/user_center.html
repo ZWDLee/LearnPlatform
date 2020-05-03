@@ -1,0 +1,663 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load participate_tags %}
+{% block title %}
+  个人中心
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'user/user_center.css' %}">
+  <link rel="stylesheet" href="">
+{% endblock %}
+{% block content %}
+  <div class="container" style="width: 1270px">
+    <div class="row" style="background: url('{% static 'img/top-bg.png' %}') no-repeat left top;">
+      {#      <img src="{% static 'img/top-bg.png' %}" alt="" width="1170" id="top-bg">#}
+      <div class="col-md-12 user-col">
+        <div class="user-info">
+          <div class="user-avatar">
+            <img src="{{ mine.profile.icon.url }}" alt="" id="user-icon">
+          </div>
+          <div class="user-base">
+            <span id="user-name">{{ mine.get_nickname_or_username }} </span>
+            {% if mine.profile.gender == 0 %}
+              <img src="{% static 'img/system_icon/男.svg' %}" alt="" id="user-gender">
+            {% elif mine.profile.gender == 1 %}
+              <img src="{% static 'img/system_icon/女.svg' %}" alt="" id="user-gender">
+            {% else %}
+              <img src="{% static 'img/system_icon/性别.svg' %}" alt="" id="user-gender">
+            {% endif %}
+            {% if status == 0 or status == 1 %}
+              <input type="text" class="form-control introduction" placeholder="编辑简介、签名"
+                     onblur="changeIntroduction({{ mine.pk }})" value="{{ mine.profile.introduction }}" maxlength="50"/>
+            {% else %}
+              <p class="introduction">{{ mine.get_user_introduction }}</p>
+            {% endif %}
+          </div>
+        </div>
+        <div class="tab-links"></div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12" id="new_box">
+        {#  自己主页，创作者    #}
+        {% if status == 0 %}
+          <div class="new_con">
+            <div class="newtel">
+              <ul class="new_telst">
+                <li class="newon">我的课程</li>
+                <li class="">数据中心</li>
+                <li class="">参与课程</li>
+{#                <li class="">讨论</li>#}
+                <p style="left: 0px;"></p>
+              </ul>
+              <div class="clear1">
+              </div>
+            </div>
+            <div id="nav-cut"></div>
+            <div class="new-wrap">
+              <!--选项卡1-->
+              <div class="new_lst " style="display: block;">
+                <p class="article-title-bar set-display">我的课程</p>
+                <a class="btn btn-primary pull-right"
+                   href="{% url 'editor_course' %}?from={{ request.get_full_path }}">
+                  <span class="glyphicon glyphicon-plus"></span> 新的课程
+                </a>
+{#                <div class="pull-right arrangement">#}
+{#                  <span class="arrangement_hover" onclick="arrangement(0)">最新发布</span>#}
+{#                  <span onclick="arrangement(1)">最多参加</span>#}
+{#                </div>#}
+                <div class="clearfix"></div>
+                <div class="article-type-bar">
+                  <ul>
+                    <li>
+                      <a href="{% url 'user_center' mine.pk %}" class="all-type is_active">全部 </a>
+                      <span>
+                        {% if all_type_count > 99 %}
+                          99+
+                        {% else %}
+                          {{ all_type_count }}
+                        {% endif %}
+                      </span>
+                    </li>
+                    {% for type_name, type_count in all_article_type.items %}
+                      <li>
+                        <div id="article-type-{{ type_name }}"
+                             onclick="changeSelectType({{ mine.pk }},'{{ type_name }}', 1)">
+                          {{ type_name }}
+                          <span>
+                            {% if type_count > 99 %}
+                              99+
+                            {% else %}
+                              {{ type_count }}
+                            {% endif %}
+                          </span>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="article-box">
+                  {% for article in articles %}
+                    <div class="col-md-3 article">
+                      <a href="{% url 'article_detail' article.pk %}">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <div class="panel-img">
+                              <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img"
+                                   height="150">
+                              <div class="article-about">
+                                <div class="visit">
+                                  <a href="{% url 'article_detail' article.pk %}">查看</a>
+                                </div>
+                                <div class="editor">
+                                  <a href="{% url 'about_course' article.pk %}?from={{ request.get_full_path }}">编辑</a>
+                                </div>
+                              </div>
+                            </div>
+                          <a href="{% url 'article_detail' article.pk %}">
+                            <div class="article-info">
+                              {% if article.title|length > 10 %}
+                                {{ article.title|truncatechars:10 }}...
+                              {% else %}
+                                {{ article.title }}
+                              {% endif %}
+                              <div class="info-bottom">
+                                <p class="pull-left">
+                                <span class="label label-info">{{ article.article_type.type_name }}</span>
+                                <span class="label label-success">{{ article.get_grade_display }}</span>
+                              </p>
+                                <p class="pull-right">
+                                  <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"
+                                       style="vertical-align: -15%"> {% get_participate_num article %}
+                                </p>
+                              </div>
+                            </div>
+                          </a>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  {% empty %}
+                    <div class="no_content">
+                      <img src="{% static 'img/system_icon/空.svg' %}" alt="">
+                      <h1>暂无投稿</h1>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <!--选项卡2-->
+              <div class="new_lst" style="display: none;">
+                <div class="no_content">
+                  <img src="{% static 'img/system_icon/统计计算.svg' %}" alt="">
+                  <h1>暂无数据</h1>
+                </div>
+              </div>
+              <!--选项卡3-->
+              <div class="new_lst" style="display: none;">
+                <p class="article-title-bar">参与课程</p>
+                {% for article in articles_list %}
+                  <div class="col-md-3 article">
+                    <a href="{% url 'article_detail' article.pk %}">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="panel-img">
+                            <img src="{{ article.icon.url }}"
+                                 alt="{{ article.title }}" class="article-img"
+                                 height="150">
+                          </div>
+                          <div class="article-info">
+                            {{ article.title }}
+                            <div class="info-bottom">
+                              <p class="pull-left">
+                                <span class="label label-info">{{ article.article_type.type_name }}</span>
+                                <span class="label label-success">{{ article.get_grade_display }}</span>
+                              </p>
+                              <p class="pull-right">
+                                <img src="{% static 'img/system_icon/用户.svg' %}"
+                                     width="16" height="16"
+                                     style="vertical-align: -15%"> {% get_participate_num article %}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                {% empty %}
+                  <div class="no_content">
+                    <img src="{% static 'img/system_icon/课程任务.svg' %}" alt="">
+                    <h1>暂无课程</h1>
+                  </div>
+                {% endfor %}
+              </div>
+              <!--选项卡4-->
+{#              <div class="new_lst" style="display: none;">#}
+{#                <div class="no_content">#}
+{#                  <img src="{% static 'img/system_icon/评论-1.svg' %}" alt="">#}
+{#                  <h1>暂无评论</h1>#}
+{#                </div>#}
+{#              </div>#}
+            </div>
+          </div>
+        {% endif %}
+        {#  自己主页，非创作者    #}
+        {% if status == 1 %}
+          <div class="new_con">
+            <div class="newtel">
+              <ul class="new_telst">
+                <li class="newon">参与课程</li>
+{#                <li class="">讨论</li>#}
+                <p style="left: 0;"></p>
+              </ul>
+              <div class="clear1">
+              </div>
+            </div>
+            <div id="nav-cut"></div>
+            <div class="new-wrap">
+              <!--选项卡3-->
+              <div class="new_lst" style="display: block;">
+                <p class="article-title-bar">参与课程</p>
+                {% for article in articles_list %}
+                  <div class="col-md-3 article">
+                    <a href="{% url 'article_detail' article.pk %}">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="panel-img">
+                            <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img"
+                                 height="150">
+                          </div>
+                          <div class="article-info">
+                            {{ article.title }}
+                            <div class="info-bottom">
+                              <p class="pull-left"><span
+                                      class="label label-info">{{ article.article_type.type_name }}</span></p>
+                              <p class="pull-right">
+                                <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"
+                                     style="vertical-align: -15%"> {% get_participate_num article %}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                {% empty %}
+                  <div class="no_content">
+                    <img src="{% static 'img/system_icon/课程任务.svg' %}" alt="">
+                    <h1>暂无课程</h1>
+                  </div>
+                {% endfor %}
+              </div>
+              <!--选项卡4-->
+              <div class="new_lst" style="display: none;">
+                {% for comment in comment_list %}
+                  {{ comment }}
+                {% empty %}
+                  <div class="no_content">
+                  <img src="{% static 'img/system_icon/评论-1.svg' %}" alt="">
+                  <h1>暂无评论</h1>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {#  不是自己主页，创作者    #}
+        {% if status == 2 %}
+          <div class="new_con">
+            <div class="newtel">
+              <ul class="new_telst">
+                <li class="newon">我的课程</li>
+                <li class="">参与课程</li>
+{#                <li class="">讨论</li>#}
+                <p style="left: 0px;"></p>
+              </ul>
+              <div class="clear1">
+              </div>
+            </div>
+            <div id="nav-cut"></div>
+            <div class="new-wrap">
+              <!--选项卡1-->
+              <div class="new_lst " style="display: block;">
+                <p class="article-title-bar">所有课程</p>
+                <div class="article-type-bar">
+                  <ul>
+                    <li>
+                      <a href="{% url 'user_center' mine.pk %}" class="all-type is_active">全部 </a>
+                      <span>
+                        {% if all_type_count > 99 %}
+                          99+
+                        {% else %}
+                          {{ all_type_count }}
+                        {% endif %}
+                      </span>
+                    </li>
+                    {% for type_name, type_count in all_article_type.items %}
+                      <li>
+                        <div id="article-type-{{ type_name }}"
+                             onclick="changeSelectType({{ mine.pk }},'{{ type_name }}')">
+                          {{ type_name }}
+                          <span>
+                            {% if type_count > 99 %}
+                              99+
+                            {% else %}
+                              {{ type_count }}
+                            {% endif %}
+                          </span>
+                        </div>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </div>
+                <div class="article-box">
+                  {% for article in articles %}
+                    <div class="col-md-3 article">
+                      <a href="{% url 'article_detail' article.pk %}">
+                        <div class="panel panel-default">
+                          <div class="panel-body">
+                            <div class="panel-img">
+                              <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img">
+                            </div>
+                            <div class="article-info">
+                              {{ article.title }}
+                              <div class="info-bottom">
+                                <p class="pull-left">
+                                <span class="label label-info">{{ article.article_type.type_name }}</span>
+                                <span class="label label-success">{{ article.get_grade_display }}</span>
+                              </p>
+                                <p class="pull-right">
+                                  <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"
+                                       style="vertical-align: -15%"> {% get_participate_num article %}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  {% empty %}
+                    <div class="no_content">
+                      <img src="{% static 'img/system_icon/空.svg' %}" alt="">
+                      <h1>暂无投稿</h1>
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+              <!--选项卡3-->
+              <div class="new_lst" style="display: none;">
+                <p class="article-title-bar">参与课程</p>
+                {% for article in articles_list %}
+                  <div class="col-md-3 article">
+                    <a href="{% url 'article_detail' article.pk %}">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="panel-img">
+                            <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img"
+                                 height="150">
+                          </div>
+                          <div class="article-info">
+                            {{ article.title }}
+                            <div class="info-bottom">
+                              <p class="pull-left">
+                                <span class="label label-info">{{ article.article_type.type_name }}</span>
+                                <span class="label label-success">{{ article.get_grade_display }}</span>
+                              </p>
+                              <p class="pull-right">
+                                <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"
+                                     style="vertical-align: -15%"> {% get_participate_num article %}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                {% empty %}
+                  <div class="no_content">
+                    <img src="{% static 'img/system_icon/课程任务.svg' %}" alt="">
+                    <h1>暂无课程</h1>
+                  </div>
+                {% endfor %}
+              </div>
+              <!--选项卡4-->
+              <div class="new_lst" style="display: none;">
+                <div class="no_content">
+                  <img src="{% static 'img/system_icon/评论-1.svg' %}" alt="">
+                  <h1>暂无评论</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        {#  不是自己主页，非创作者    #}
+        {% if status == 3 %}
+          <div class="new_con">
+            <div class="newtel">
+              <ul class="new_telst">
+                <li class="newon">参与课程</li>
+                <li class="">讨论</li>
+                <p style="left: 0px;"></p>
+              </ul>
+              <div class="clear1">
+              </div>
+            </div>
+            <div id="nav-cut"></div>
+            <div class="new-wrap">
+              <!--选项卡3-->
+              <div class="new_lst" style="display: block;">
+                <p class="article-title-bar">参与课程</p>
+                {% for article in articles_list %}
+                  <div class="col-md-3 article">
+                    <a href="{% url 'article_detail' article.pk %}">
+                      <div class="panel panel-default">
+                        <div class="panel-body">
+                          <div class="panel-img">
+                            <img src="{{ article.icon.url }}" alt="{{ article.title }}" class="article-img"
+                                 height="150">
+                          </div>
+                          <div class="article-info">
+                            {{ article.title }}
+                            <div class="info-bottom">
+                              <p class="pull-left">
+                                <span class="label label-info">{{ article.article_type.type_name }}</span>
+                                <span class="label label-success">{{ article.get_grade_display }}</span>
+                              </p>
+                              <p class="pull-right">
+                                <img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"
+                                     style="vertical-align: -15%"> {% get_participate_num article %}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                {% empty %}
+                  <div class="no_content">
+                    <img src="{% static 'img/system_icon/课程任务.svg' %}" alt="">
+                    <h1>暂无课程</h1>
+                  </div>
+                {% endfor %}
+              </div>
+              <!--选项卡4-->
+              <div class="new_lst" style="display: none;">
+                <div class="no_content">
+                  <img src="{% static 'img/system_icon/评论-1.svg' %}" alt="">
+                  <h1>暂无评论</h1>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+  <script src="{% static 'user/user_center.js' %}"></script>
+  <script type="text/javascript">
+    // 稿件类型的ajax请求
+    function changeSelectType(mine_pk, type_name) {
+      // 移除article-box下的所有html，为ajax请求到的内容做准备
+      $('.article-box').empty();
+      if ($("div[id*='article-type-']")) {
+        // 移除'全部'的样式
+        $('.all-type').removeClass('is_active');
+        $("div[id*='article-type-']").removeClass('is_active');
+      }
+      $.ajax({
+        url: '{% url 'article_type_select' %}',
+        type: 'GET',
+        data: {
+          mine_pk: mine_pk,
+          type_name: type_name
+        },
+        cache: false,
+        success: function (data) {
+          if (data['status'] == 'SUCCESS') {
+            if (data['code'] == 401) {
+              const no_content = '<div class="no_content">\n' +
+                '<img src="{% static 'img/system_icon/空.svg' %}" alt="">\n' +
+                '<h1>' + data['message'] + '</h1>\n' +
+                '</div>';
+              $('.article-box').append(no_content);
+              $(window).click(function () {
+                //正文高度
+                var body_height = $(document.body).outerHeight(true);
+                //底部元素高度
+                var bottom_height = $("#footer").outerHeight(true);
+                //浏览器页面高度
+                var window_height = $(window).height();
+                //判断并调整底部元素的样式
+                if ($(".footer").hasClass('page-bottom')) {
+                  //若包含有page-bottom类，就应用了position设置
+                  //当position为absolute时，body高度不包含这个元素
+                  //所以页面高度需要判断body和footer之和若小于浏览器窗口
+                  //则移除样式，让footer自然跟随在正文后面
+                  if (body_height + bottom_height >= window_height) {
+                    $(".footer").removeClass('page-bottom');
+                  }
+                } else {
+                  //若没有page-bottom类，body高度包含footer
+                  //判断body高度小于浏览器时，则悬浮于底部
+                  if (body_height < window_height) {
+                    $(".footer").addClass('page-bottom');
+                  }
+                }
+              });
+              $(window).trigger('resize');
+              return false;
+            }
+            {# data['articles']内str转json #}
+            var str_articles = data['articles'];
+            var json_articles = JSON.parse(str_articles);
+            $('#article-type-' + data['article_type_name']).addClass('is_active');
+            if (data['article_type_name'] == 'C++') {
+              $('#article-type-C\\\u002B\\\u002B').addClass('is_active');
+            }
+            for (let i = 0; i < Object.keys(json_articles).length; i++) {
+              if (i == 0) {
+
+                // 解析url
+                var url = "{% url 'article_detail' 12345%}";
+                url = url.replace('12345', json_articles[i].pk);
+
+                // i=0时replaceWith内容
+                let article_html = '<div class="col-md-3 article">\n' +
+                  '<a href="' + url + '">\n' +
+                  '<div class="panel panel-default">\n' +
+                  '<div class="panel-body">\n' +
+                  '<div class="panel-img">\n' +
+                  '<img src="/media/' + json_articles[i].fields.icon + '" ' +
+                  'alt="' + json_articles[i].fields.title + '" class="article-img">\n' +
+                  '</div>\n' +
+                  '<div class="article-info">\n' +
+                  '' + json_articles[i].fields.title + '\n' +
+                  '<div class="info-bottom">\n' +
+                  '<p class="pull-left"><span\n' +
+                  'class="label label-info">' + data['article_type_name'] + '</span></p>\n' +
+                  '<p class="pull-right">\n' +
+                  '<img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"\n' +
+                  'style="vertical-align: -15%"> ' + data['participate_dict'][i] + '\n' +
+                  '</p>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</a>\n' +
+                  '</div>';
+                $('.article-box').append(article_html);
+              } else {
+                var url = "{% url 'article_detail' 12345%}";
+                url = url.replace('12345', json_articles[i].pk);
+
+                // i>0时append内容
+                let article_html = '<div class="col-md-3 article">\n' +
+                  '<a href="' + url + '">\n' +
+                  '<div class="panel panel-default">\n' +
+                  '<div class="panel-body">\n' +
+                  '<div class="panel-img">\n' +
+                  '<img src="/media/' + json_articles[i].fields.icon + '" ' +
+                  'alt="' + json_articles[i].fields.title + '" class="article-img">\n' +
+                  '</div>\n' +
+                  '<div class="article-info">\n' +
+                  '' + json_articles[i].fields.title + '\n' +
+                  '<div class="info-bottom">\n' +
+                  '<p class="pull-left"><span\n' +
+                  'class="label label-info">' + data['article_type_name'] + '</span></p>\n' +
+                  '<p class="pull-right">\n' +
+                  '<img src="{% static 'img/system_icon/用户.svg' %}" alt="" width="16" height="16"\n' +
+                  'style="vertical-align: -15%">' + data['participate_dict'][i] + '\n' +
+                  '</p>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</div>\n' +
+                  '</a>\n' +
+                  '</div>';
+                $('.article-box').append(article_html);
+              }
+            }
+          } else {
+            const no_content = '<div class="no_content">\n' +
+              '<img src="{% static 'img/system_icon/8错误.svg' %}" alt="">\n' +
+              '<h1>' + data['message'] + '</h1>\n' +
+              '</div>';
+            $('.article-box').append(no_content);
+            $(window).click(function () {
+              //正文高度
+              var body_height = $(document.body).outerHeight(true);
+              //底部元素高度
+              var bottom_height = $("#footer").outerHeight(true);
+              //浏览器页面高度
+              var window_height = $(window).height();
+              //判断并调整底部元素的样式
+              if ($(".footer").hasClass('page-bottom')) {
+                //若包含有page-bottom类，就应用了position设置
+                //当position为absolute时，body高度不包含这个元素
+                //所以页面高度需要判断body和footer之和若小于浏览器窗口
+                //则移除样式，让footer自然跟随在正文后面
+                if (body_height + bottom_height >= window_height) {
+                  $(".footer").removeClass('page-bottom');
+                }
+              } else {
+                //若没有page-bottom类，body高度包含footer
+                //判断body高度小于浏览器时，则悬浮于底部
+                if (body_height < window_height) {
+                  $(".footer").addClass('page-bottom');
+                }
+              }
+            });
+            $(window).trigger('resize');
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        }
+      });
+    }
+
+    // 简介/签名的ajax请求
+    function changeIntroduction(mine_pk) {
+      const introduction = $('.introduction').val();
+      console.log(introduction);
+      $.ajax({
+        url: '{% url 'change_introduction' %}',
+        type: 'GET',
+        data: {
+          introduction: introduction,
+          mine_pk: mine_pk
+        },
+        cache: false,
+        success: function (data) {
+          if (data['code'] == 200) {
+            $('.introduction').val(data['back_intro']);
+          } else {
+            return false;
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        }
+      });
+    }
+
+    // 排序ajax请求
+  {#function arrangement(signal) {#}
+  {#  $.ajax({#}
+  {#    url: '',#}
+  {#    type: 'GET',#}
+  {#    data: {#}
+  {#      signal: signal#}
+  {#    },#}
+  {#    cache: false,#}
+  {#    success: function (data) {#}
+  {#      console.log(data);#}
+  {#    },#}
+  {#    error: function (xhr) {#}
+  {#      console.log(xhr);#}
+  {#    }#}
+  {#  })#}
+  {# }#}
+  </script>
+{% endblock %}

@@ -1,0 +1,199 @@
+{% load static %}
+{% load notifications_tags %}
+{% load my_notifications_tags %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'bootstrap-3.3.7-dist/css/bootstrap.min.css' %} ">
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animate.min.css' %}">
+  {% block ext_css %}
+
+  {% endblock %}
+</head>
+<body>
+<nav class="navbar navbar-default navbar-fixed-top" role='navigation' >
+  <div class="container" style="margin-top: 0.5em">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <a class="navbar-brand" href="{% url 'home' %}">勤学在线</a>
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+              data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><a href="{% url 'home' %}">首页</a></li>
+        <li id="category">
+          <a href="" >分类 <span class="glyphicon glyphicon-th-list"></span></a>
+          <ul class="category-menu">
+            <li>
+              <h4>编程语言</h4>
+                <a href="{% url 'search' %}?c_wd=Java">Java</a>
+                <a href="{% url 'search' %}?c_wd=C">C++</a>
+                <a href="{% url 'search' %}?c_wd=Python">Python</a>
+                <a href="{% url 'search' %}?c_wd=JavaScript">JavaScript</a>
+                <a href="{% url 'search' %}?c_wd=SQL">SQL</a>
+                <a href="{% url 'search' %}?c_wd=Swift">Swift</a>
+                <a href="{% url 'search' %}?c_wd=PHP">PHP</a>
+                <a href="{% url 'search' %}?c_wd=C">C#</a>
+                <a href="{% url 'search' %}?c_wd=GO语言">GO语言</a>
+                <a href="{% url 'search' %}?c_wd=Ruby">Ruby</a>
+                <a href="{% url 'search' %}?c_wd=其他">其他</a>
+            </li>
+            <li>
+              <h4>前端开发</h4>
+              <a href="">基础入门</a>
+              <a href="">实战进阶</a>
+              <a href="">技术专题</a>
+            </li>
+            <li>
+              <h4>移动开发</h4>
+                <a href="">Android开发</a>
+                <a href="">iOS开发</a>
+                <a href="">微信开发</a>
+                <a href="">跨平台APP开发</a>
+                <a href="">其他</a>
+            </li>
+            <li>
+              <h4>网络运维</h4>
+                <a href="">Linux运维</a>
+                <a href="">Python自动化运维</a>
+                <a href="">DevOps</a>
+                <a href="">信息安全</a>
+                <a href="">其他</a>
+            </li>
+            <li>
+              <h4>游戏开发</h4>
+                <a href="">Unity3d游戏开发</a>
+                <a href="">游戏服务器开发</a>
+                <a href="">Html5游戏</a>
+                <a href="">VR/AR</a>
+                <a href="">OpenGL</a>
+                <a href="">其他 </a>
+            </li>
+            <li>
+              <h4>软件测试</h4>
+                <a href="">敏捷开发</a>
+                <a href="">软件测试</a>
+                <a href="">软件研发</a>
+                <a href="">其他</a>
+            </li>
+            <li>
+              <h4>云计算大数据</h4>
+                <a href="">云计算</a>
+                <a href="">大数据</a>
+                <a href="">人工智能</a>
+                <a href="">物联网</a>
+                <a href="">区块链</a>
+                <a href="">其他</a>
+            </li>
+          </ul>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right" >
+        <form class="navbar-form navbar-left" style="margin-right: 2em" action="{% url 'search' %}">
+          <div class="form-group">
+            <input type="text" name="wd"
+                   class="form-control" placeholder="搜索课程" id="search" maxlength="20">
+          </div>
+          <button type="submit" class="btn btn-default" id="submit-btn">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
+        </form>
+      {% if user.is_authenticated %}
+        <ul class="nav navbar-nav">
+        {% notifications_unread as unread_count%}
+          <li id="notification">
+            <a href="{% url 'my_notifications' %}" target="_blank">消息
+              {% if unread_count > 0 %}
+                <span class="badge unread-count live_notify_badge">
+                  {{ unread_count }}
+                </span>
+              {% endif %}
+
+            </a>
+            <ul class="notification-menu">
+              <li class="notification-reply">
+                <a href="{% url 'my_notifications' %}" target="_blank">
+                  评论回复 <sup class="badge unread-count">{% get_comment_notifications user %}</sup>
+                </a>
+              </li>
+              <li class="notification-like">
+                <a href="{% url 'my_notifications' %}#likes" target="_blank">
+                  收到的赞 <sup class="badge unread-count">{% get_like_notifications user %}</sup>
+                </a>
+              </li>
+              {% if user.get_user_type == 1 %}
+                 <li class="notification-score">
+                <a href="{% url 'my_notifications' %}#score" target="_blank">
+                  收到评价 <sup class="badge unread-count">{% get_score_notifications user %}</sup>
+                </a>
+              </li>
+              {% endif %}
+              <li class="notification-system">
+                <a href="{% url 'my_notifications' %}#system" target="_blank">
+                  系统通知 <sup class="badge unread-count">{% get_system_notifications user %}</sup>
+                </a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+          <li id="user-info-panel">
+            <a href="{% url 'user_center' user.pk %}" target="_blank">
+              <span class="user-icon">
+                <img src="{{ user.get_user_icon }}" alt="{{ user.get_nickname_or_username }}">
+              </span>
+            </a>
+            <ul id="user-info-menu">
+              <li class="user-center">
+                <a href="{% url 'user_center' user.pk %}" target="_blank">个人中心</a>
+              </li>
+              <li><a href="{% url 'user_profile' %}" target="_blank">个人资料</a></li>
+              {% if user.is_superuser %}
+                <li><a href="{% url 'xadmin:index' %}" target="_blank">后台管理</a></li>
+              {% endif %}
+              <li><a href="{% url 'logout_to' %}">退出登录</a></li>
+            </ul>
+          </li>
+        {% else %}
+          <li ><a href="{% url 'login_to' %}?from={{ request.get_full_path }}">登录</a></li>
+          <li><a href="{% url 'register' %}?from={{ request.get_full_path }}">注册</a></li>
+        {% endif %}
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+{# 回到顶部 #}
+<div id="to-top">
+  <img src="{% static 'img/system_icon/to_top.svg' %}" alt="">
+</div>
+{% block content %}
+
+{% endblock %}
+<div id="tips">
+    <p></p>
+</div>
+<script type="text/javascript" src='{% static "js/jquery.min.js" %}'></script>
+<script type="text/javascript" src='{% static "bootstrap-3.3.7-dist/js/bootstrap.min.js" %}'></script>
+<script type="text/javascript" src="{% static 'js/base.js' %}"></script>
+{# 消息实时更新 #}
+<script  type="text/javascript" src="{% static 'notifications/notify.js' %}"></script>
+{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+
+{% block ext_js %}
+  <script>
+    $(function () {
+      sessionStorage.clear();
+    });
+  </script>
+{% endblock %}
+</body>
+</html>

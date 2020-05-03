@@ -1,0 +1,36 @@
+.col-md-12 h2 {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+.col-md-12 h2:before {
+    content: '';
+    display: inline-block;
+    width: 350px;
+    height: 0;
+    border-bottom: 1px solid #cdcdcd;
+    margin-right: 1em;
+}
+.col-md-12 h2:after {
+    content: '';
+    display: inline-block;
+    width: 350px;
+    height: 0;
+    border-bottom: 1px solid #cdcdcd;
+    margin-left: 1em;
+}
+.login-edu {
+    width: 410px;
+    height: 280px;
+    border-right: 1px solid #cdcdcd;
+}
+.login-form {
+    margin-left: 25px;
+}
+.login-to {
+    width: 186px;
+    height: 38px;
+}
+.forgot_password{
+    line-height: 3em;
+}

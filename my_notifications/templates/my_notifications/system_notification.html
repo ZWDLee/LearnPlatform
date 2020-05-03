@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}
+  系统消息
+{% endblock %}
+{% block ext_css %}
+
+{% endblock %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+        <h2>{{ notification.title }}</h2>
+        <div>
+          {{ notification.content|safe }}
+        </div>
+        <div>通知日期：{{ notification.send_time }}</div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+  个人资料
+{% endblock %}
+{% block ext_css %}
+  <link rel="stylesheet" href="{% static 'user/user_profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/option_card.css' %}">
+{% endblock %}
+{% block content %}
+  <div class="container user-profile-box">
+    <div class="row">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="price">
+          <div class="category">
+            <ul>
+              <li class="active change">基本信息</li>
+              <li class="change">账号安全</li>
+            </ul>
+          </div>
+          <div class="cont active">
+            <form action="{% url 'save_user_profile' %}" method="POST" enctype="multipart/form-data" id="save-profile">
+              {% csrf_token %}
+              <div class="box"><span id="username">用户名</span><span>{{ username }}</span></div>
+              <div class="box">
+                <span id="username">用户类型</span>
+                <span>{% if user.get_user_type == 0 %}
+                  学生 &nbsp;<a tabindex="0"
+                   id="element"
+                   class="badge"
+                   role="button"
+                   data-toggle="popover"
+                   data-trigger="focus"
+                   data-placement="bottom"
+                   data-content="发送账号id，教育教学，从业等证明到邮箱：levi_django@163.com,三个工作日内完成审核，请关注邮箱回信！">
+                  ?
+                </a>
+                {% else %}
+                  教师
+                {% endif %} </span>
+              </div>
+              {% for field in user_profile_form %}
+                <div class="left-title"><label for="{{ field.id_for_label }}">{{ field.label }}</label></div>
+                {% if field.id_for_label == 'id_nickname' %}
+                  {{ field }}
+                  <p class="text-danger">{{ field.errors.as_text }}</p>
+                {% else %}
+                  {{ field }}
+                  <p class="text-danger">{{ field.errors.as_text }}</p>
+                {% endif %}
+              {% endfor %}
+              <div class="tip">{{ register_form.non_field_errors }}</div>
+              <input type="submit" value="保存" class="save-btn">
+            </form>
+          </div>
+          <div class="cont">
+            <div id="safety">
+              <div class="safety-item">
+                <span class="title">邮箱:</span>
+                {% if email %}
+                  <span>{{ email }} </span>
+                  <a href="{% url 'bind_email' %}">修改邮箱</a>
+                {% else %}
+                  <a href="{% url 'bind_email' %}">绑定邮箱</a>
+                {% endif %}
+              </div>
+              <div class="safety-item">
+                <span class="title">密码设置：</span><a href="{% url 'change_password' %}">点击更改</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+{% block ext_js %}
+  <script>
+    $('#save-profile').submit(function () {
+      const id_nickname = $('#id_nickname').val().trim();
+      if (id_nickname == '') {
+        $('.text-danger').eq(0).text('* 昵称不能为空');
+        return false;
+      }
+      $.ajax({
+        url: '{% url 'save_user_profile' %}',
+        type: 'POST',
+        data: $(this).serialize(),
+        cache: false,
+        success: function (data) {
+          if (data['status'] == 'SUCCESS') {
+            $('#tips p').text(data['message']);
+            $('#tips').attr('class', 'animated fadeIn').show();
+            setTimeout(function () {
+              $('#tips').attr('class', 'animated fadeOut');
+            }, 2000);
+          }
+          else {
+            $('.text-danger').eq(0).text(data['error_message']);
+          }
+        },
+        error: function (xhr) {
+          console.log(xhr);
+        }
+      });
+      return false;
+    });
+    // 选项卡
+    $(function () {
+      //选项卡切换
+      $('.category ul li').click(function () {
+        indexC = $(this).index();
+        $(this).addClass('active').siblings().removeClass('active');
+        $('.cont').eq(indexC).addClass('active').siblings().removeClass('active');
+      });
+    });
+    $('#element').click(function () {
+      $('#element').popover('show');
+    })
+  </script>
+{% endblock %}
