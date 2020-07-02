@@ -80,6 +80,9 @@
                     <span>{{ notification.verb }}
                       {% if notification.data.notification_type == 'comment' %}
                         《{{ notification.data.article_title }}》
+                         <div class="about-comment">
+                            {{ user.get_nickname_or_username }}：{{ notification.data.about_comment }}
+                          </div>
                       {% else %}
                         <div class="reply-text">
                             回复 <a href="{% url 'user_center' user.pk %}">{{ user.get_nickname_or_username }}</a>
@@ -187,7 +190,7 @@
                     </span>
                   </div>
                   <div class="pull-right">
-                    <a href="{{ notification.data.notification_id }}" title="查看详情">查看详情&rarr;</a>
+                    <a href="{% url 'system_notification' notification.data.notification_id %}" title="查看详情">查看详情&rarr;</a>
                   </div>
                   <div class="bottom-line"></div>
                 </div>

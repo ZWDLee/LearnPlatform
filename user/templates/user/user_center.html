@@ -2,7 +2,7 @@
 {% load static %}
 {% load participate_tags %}
 {% block title %}
-  个人中心
+  个人中心|{{ mine.get_nickname_or_username }}
 {% endblock %}
 {% block ext_css %}
   <link rel="stylesheet" href="{% static 'user/user_center.css' %}">

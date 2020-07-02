@@ -87,6 +87,7 @@
         type: 'POST',
         data: $(this).serialize(),
         cache: false,
+
         success: function (data) {
           if (data['status'] == 'SUCCESS') {
             $('#tips p').text(data['message']);

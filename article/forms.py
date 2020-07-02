@@ -4,7 +4,6 @@ from .models import Article, ArticleDetail, ArticleType
 
 
 class EditorCourseForm(forms.ModelForm):
-
     title = forms.CharField(
         label='课程标题',
         min_length=5,

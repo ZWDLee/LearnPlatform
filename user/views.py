@@ -162,7 +162,6 @@ def logout_to(request):
     return redirect(request.META.get('HTTP_REFERER', reverse('home')))
 
 
-@login_required
 def user_center(request, user_center_pk):
     # 用户信息
     mine = get_object_or_404(User, pk=user_center_pk)
